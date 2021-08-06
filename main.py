@@ -1,7 +1,7 @@
 import cv2 as cv
 import numpy  as np
 import tensorflow as tf
-
+import matplotlib.pyplot as plt
 
 def predict_numbers(img_path, model_path):
     src = cv.imread(cv.samples.findFile(img_path))
@@ -41,7 +41,12 @@ def predict_numbers(img_path, model_path):
 
 
 def visualize(img_path, predictions):
-    ...
+    image = plt.imread(img_path)
+    fig, ax = plt.subplots()
+    ax.imshow(image)
+    ax.axis('off')
+    ax.set_title(f'Predicted values = {predictions}')
+    plt.show()
 
 
 if __name__ == '__main__':
@@ -50,4 +55,5 @@ if __name__ == '__main__':
     MODEL_PATH = 'train_model/saved_model/Xception_transfered_to_mnist.h5'
 
     predictions = predict_numbers(IMAGE_PATH, MODEL_PATH)
-    print(f'Predicted numbers are: {predictions}')
+
+    visualize(IMAGE_PATH, predictions)
