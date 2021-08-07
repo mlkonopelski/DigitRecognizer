@@ -5,6 +5,7 @@ from tensorflow.keras.applications import xception
 import matplotlib.pyplot as plt
 from config import preprocess_params
 from visualizations.show_image import visualize_image
+import os
 
 
 class PreprocessImage:
@@ -42,6 +43,16 @@ class PreprocessImage:
 
         self.rectangles = return_rectangles(preprocess_image(self.image))
         self.numbers = cut_numbers_from_canvas(self.image, self.rectangles)
+        self.dataset = tf.data.Dataset.from_tensor_slices(self.numbers).batch(32)
+
+
+def preprocess_images():
+    images = []
+    for img_path in os.listdir('test_samples'):
+        images.append([img_path, PreprocessImage(os.path.join('test_samples',img_path).numbers)])
+    if len(images) == 0:
+        print('There are no pictures to be predicted')
+    return images
 
 
 if __name__ == '__main__':
