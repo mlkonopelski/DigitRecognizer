@@ -1,7 +1,8 @@
 import cv2 as cv
-import numpy  as np
+import numpy as np
 import tensorflow as tf
 import matplotlib.pyplot as plt
+
 
 def predict_numbers(img_path, model_path):
     src = cv.imread(cv.samples.findFile(img_path))
@@ -36,6 +37,7 @@ def predict_numbers(img_path, model_path):
     model = tf.keras.models.load_model(model_path)
     y_pred = model.predict(test_dataset)
     predictions = np.sort(y_pred.argmax(axis=-1))
+    predictions = ''.join(map(str, predictions))
 
     return predictions
 
