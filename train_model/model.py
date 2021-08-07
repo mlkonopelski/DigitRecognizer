@@ -70,9 +70,8 @@ def train_model(dataset, parameters):
 
 
 class TrainModel:
-    def __init__(self):
-        self.model = None
 
+    @classmethod
     def fit(self, parameters):
         if model_saved():
             self.model = tf.keras.models.load_model(os.path.join('saved_model', model_params.model_name))
