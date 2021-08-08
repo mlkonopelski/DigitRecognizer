@@ -27,7 +27,7 @@ If you are using linux distro or wsl you can use bash arguments to adjust the ex
 ```python main.py --help```
 1. Save the predictions in csv file: ```--csv```
 1. [unstable] Open each picture with bounding boxes and prediction in title: ```--showpicture```. This is unstable
-version because it requires additional installations on OS site. For convenience we save each of test samples in this 
+version because it requires additional installations on OS site. For convenience I saved each of test samples in this 
 format in dir: test_samples/predicted_samples.
 ![showpicture](https://github.com/mlkonopelski/DigitRecognizer/blob/main/utils/DigitRecognizerExample.PNG?raw=true "Optional Title")
 1. As I don't know how this will be used, I also created utility function ```predict_picture``` in predict_picture script which
