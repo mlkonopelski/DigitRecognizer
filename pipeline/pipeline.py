@@ -2,6 +2,7 @@ from urllib.request import urlretrieve
 from config import model_params
 from train_model.model import TrainModel
 from preprocess_images.preprocess import preprocess_images
+from visualizations.image_visualizations import visualize_image_with_bounding_box
 import os
 import numpy as np
 import csv
@@ -36,30 +37,36 @@ class Pipeline:
 
     def make_predictions(self):
         predictions = []
-        for img_path, numbers_to_predict in self.images:
-            prediction = self.model.predict(numbers_to_predict)
+        for img_path, rectangles, numbers_to_predict in self.images:
+            prediction = self.model.model.predict(numbers_to_predict)
             prediction = np.sort(prediction.argmax(axis=-1))
             prediction = ''.join(map(str, prediction))
-            predictions.append([img_path, prediction])
+            predictions.append([img_path, rectangles, prediction])
         return predictions
 
     def store_results(self):
         # default version - print on screen
         if not self.stages.csv and not self.stages.showpicture:
-            [print(f'Image: {img[0]} | Prediction: {img[1]}') for img in self.predictions]
+            for img in self.predictions:
+                print(f'Image: {img[0]} | Prediction: {img[3]}')
 
         else:
             if self.stages.csv:
                 self.create_csv_file()
 
             if self.stages.showpicture:
-                #TODO: prepare visualization class in vosializations module
-                pass
+                self.show_pictures()
 
-    @staticmethod
-    def create_csv_file(data):
-        file = open('test_images', f'Predictions_{date.today().strftime("%Y%m%d")}.csv', 'w+', newline='')
+
+    def create_csv_file(self):
+        file = open(os.path.join('test_samples', f'Predictions_{date.today().strftime("%Y%m%d")}.csv'), 'w+', newline='')
         with file:
             write = csv.writer(file)
             write.writerow(['Image', 'Prediction'])
-            write.writerows(data)
+            write.writerows(self.predictions)
+
+    def show_pictures(self):
+        for i in range(len(self.predictions)):
+            prediction = self.predictions[i]
+            visualize_image_with_bounding_box(prediction)
+
