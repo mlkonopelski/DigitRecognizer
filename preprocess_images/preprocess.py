@@ -4,7 +4,7 @@ import tensorflow as tf
 from tensorflow.keras.applications import xception
 import matplotlib.pyplot as plt
 from config import preprocess_params
-from visualizations.show_image import visualize_image
+from visualizations.image_visualizations import visualize_image
 import os
 
 
@@ -48,8 +48,11 @@ class PreprocessImage:
 
 def preprocess_images():
     images = []
-    for img_path in os.listdir('test_samples'):
-        images.append([img_path, PreprocessImage(os.path.join('test_samples',img_path).numbers)])
+    included_extensions = ['jpg', 'jpeg', 'bmp', 'png']
+    file_names = [fn for fn in os.listdir('test_samples') if any(fn.endswith(ext) for ext in included_extensions)]
+    for img_path in file_names:
+        preprocessed_image = PreprocessImage(os.path.join('test_samples', img_path))
+        images.append([img_path, preprocessed_image.rectangles, preprocessed_image.numbers])
     if len(images) == 0:
         print('There are no pictures to be predicted')
     return images
