@@ -1,18 +1,18 @@
-import numpy as np
 import os
-import tensorflow as tf
-from tensorflow import keras
-from tensorflow.keras import models, layers, metrics, applications
-import tensorflow_datasets as tfds
-from config import model_params
+import os
 import warnings
 
+import tensorflow as tf
+import tensorflow_datasets as tfds
+from tensorflow import keras
+from tensorflow.keras import layers, applications
 
-def model_saved():
-    if os.path.isfile(os.path.join('train_model', 'saved_model', model_params.model_name)):
+
+def model_saved(parameters):
+    if os.path.isfile(os.path.join('train_model', 'saved_model', parameters.model_name)):
         return True
     else:
-        for fname in os.listdir('saved_model'):
+        for fname in os.listdir(os.path.join('train_model', 'saved_model')):
             if fname.endswith('.h5'):
                 warnings.warn("The model found have wrong name. It's not guaranteed to work.")
                 return True
@@ -27,12 +27,16 @@ def preprocess_image(image, label):
   return final_image, label
 
 
-def prepare_dataset():
+def prepare_dataset(parameters):
     (train, valid), ds_info = tfds.load('mnist',
-                                              split=['train[:90%]', 'train[90%:]'],
+                                              split=[f'train[:{parameters.train_subset}%]', f'train[{parameters.train_subset}%:]'],
                                               as_supervised=True,
                                               batch_size=32,
                                               with_info=True)
+    if parameters.local_training:
+        train = train.take(100)
+        valid = valid.take(15)
+
     train = train.map(preprocess_image)
     valid = valid.map(preprocess_image)
 
@@ -52,19 +56,23 @@ def train_model(dataset, parameters):
         layer.trainable = False
 
     model.compile(loss='sparse_categorical_crossentropy',
-                  optimizer=keras.optimizers.SGD(learning_rate=0.2, momentum=0.9, decay=0.01),
+                  optimizer=keras.optimizers.SGD(learning_rate=parameters.top_layers_training_lr,
+                                                 momentum=parameters.top_layers_training_momentum,
+                                                 decay=parameters.top_layers_training_decay),
                   metrics=['accuracy'])
 
-    history = model.fit(train, epochs=10, validation_data=valid)
+    model.fit(train, epochs=parameters.top_layers_training_epochs, validation_data=valid)
 
     for layer in base_model.layers:
         layer.trainable = True
 
     model.compile(loss='sparse_categorical_crossentropy',
-                  optimizer=keras.optimizers.SGD(learning_rate=0.01, momentum=0.9, decay=0.001),
+                  optimizer=keras.optimizers.SGD(learning_rate=parameters.all_layers_training_lr,
+                                                 momentum=parameters.all_layers_training_momentum,
+                                                 decay=parameters.all_layers_training_decay),
                   metrics=['accuracy'])
 
-    history = model.fit(train, epochs=3, validation_data=valid)
+    model.fit(train, epochs=parameters.all_layers_training_epochs, validation_data=valid)
 
     return model
 
@@ -73,10 +81,10 @@ class TrainModel:
 
     @classmethod
     def fit(self, parameters):
-        if model_saved():
-            self.model = tf.keras.models.load_model(os.path.join('train_model', 'saved_model', model_params.model_name))
+        if model_saved(parameters):
+            self.model = tf.keras.models.load_model(os.path.join('train_model', 'saved_model', parameters.model_name))
 
         else:
-            self.dataset = prepare_dataset()
+            self.dataset = prepare_dataset(parameters)
             self.model = train_model(self.dataset, parameters)
-            self.model.save(os.path.join('saved_model', model_params.model_name))
+            self.model.save(os.path.join('saved_model', parameters))

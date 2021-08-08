@@ -1,12 +1,14 @@
-from urllib.request import urlretrieve
-from config import model_params
-from train_model.model import TrainModel
-from preprocess_images.preprocess import preprocess_images
-from visualizations.image_visualizations import visualize_image_with_bounding_box
-import os
-import numpy as np
 import csv
+import os
 from datetime import date
+from urllib.request import urlretrieve
+
+import numpy as np
+
+from config import model_params
+from preprocess_images.preprocess import preprocess_images
+from train_model.model import TrainModel
+from visualizations.image_visualizations import visualize_image_with_bounding_box
 
 
 class Pipeline:
@@ -48,7 +50,7 @@ class Pipeline:
         # default version - print on screen
         if not self.stages.csv and not self.stages.showpicture:
             for img in self.predictions:
-                print(f'Image: {img[0]} | Prediction: {img[3]}')
+                print(f'Image: {img[0]} | Prediction: {img[2]}')
 
         else:
             if self.stages.csv:
@@ -57,9 +59,8 @@ class Pipeline:
             if self.stages.showpicture:
                 self.show_pictures()
 
-
     def create_csv_file(self):
-        file = open(os.path.join('test_samples', f'Predictions_{date.today().strftime("%Y%m%d")}.csv'), 'w+', newline='')
+        file = open(os.path.join('test_samples', 'predicted_samples', f'Predictions_{date.today().strftime("%Y%m%d")}.csv'), 'w+', newline='')
         with file:
             write = csv.writer(file)
             write.writerow(['Image', 'Prediction'])
@@ -69,4 +70,3 @@ class Pipeline:
         for i in range(len(self.predictions)):
             prediction = self.predictions[i]
             visualize_image_with_bounding_box(prediction)
-

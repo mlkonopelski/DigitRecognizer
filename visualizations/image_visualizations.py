@@ -25,12 +25,12 @@ def visualize_image_with_bounding_box(prediction_info):
     fig, ax = plt.subplots()
     ax.imshow(image)
     ax.axis('off')
-    for rect in rectangle[0]:
-        print(rect)
+    for rect in rectangle:
         x,y,w,h = rect
         rect = patches.Rectangle((x, y), w, h, linewidth=1, edgecolor='r', facecolor='none')
         ax.add_patch(rect)
     ax.set_title(f'Image: {img_path} | Prediction: {prediction}')
+    fig.savefig(os.path.join('test_samples', 'predicted_samples', f'{img_path}'))
     plt.show()
 
 

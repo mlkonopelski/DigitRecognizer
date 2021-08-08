@@ -29,14 +29,15 @@ class PreprocessImage:
                 x, y, w, h = cv.boundingRect(hull)
                 rectangles.append([x, y, w, h])
                 rectangles.append([x, y, w, h])  # because cv.groupRectangles drops rectangles which are only 1
-            rectangles = cv.groupRectangles(rectangles, 1, eps=preprocess_params.group_rectangles_eps)
+            rectangles, _ = cv.groupRectangles(rectangles, 1, eps=preprocess_params.group_rectangles_eps)
             return rectangles
 
         def cut_numbers_from_canvas(img, rectangles):
             resized_numbers = []
-            for i in range(len(rectangles[0])):
-                x, y, w, h = rectangles[0][i]
+            for r in rectangles:
+                x, y, w, h = r
                 croped = img[y:y + h, x:x + w]
+                croped = cv.copyMakeBorder(croped, 10, 10, 10, 10, cv.BORDER_CONSTANT, value=(0, 0, 0))
                 resized = cv.resize(croped, (299, 299))
                 preprocessed = xception.preprocess_input(resized).reshape(299, 299, 3)
                 resized_numbers.append(preprocessed)
@@ -62,7 +63,7 @@ def preprocess_images():
 
 if __name__ == '__main__':
 
-    images = PreprocessImage('../test_samples/Example2.png').numbers
+    images = PreprocessImage('../test_samples/Example4.bmp').numbers
 
     for img in images:
         visualize_image(img)
