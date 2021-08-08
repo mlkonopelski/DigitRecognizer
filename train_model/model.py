@@ -1,25 +1,51 @@
 import logging
 import os
-import warnings
 
 import tensorflow as tf
 import tensorflow_datasets as tfds
 from tensorflow import keras
 from tensorflow.keras import layers, applications
+from tensorflow.keras.models import model_from_json
 
 
 def model_saved(parameters):
     if os.path.isfile(os.path.join('train_model', 'saved_model', parameters.model_name)):
-        logging.info(f'Saved model has been found and it will be load.')
         return True
     else:
         for fname in os.listdir(os.path.join('train_model', 'saved_model')):
             if fname.endswith('.h5'):
-                logging.warning("The model found have wrong name. It's not guaranteed to work.")
                 return True
         else:
             logging.info(f'Saved model has NOT been found and IT WILL BE TRAINED.')
             return False
+
+
+def load_saved_model(parameters):
+    '''
+    If whole model in .h5 is available load it.
+    Other wise build model from json and weigths. Then save compiled model as h5.
+    :return tensorflow model instance fitted.
+    '''
+    if os.path.isfile(os.path.join('train_model', 'saved_model', parameters.model_name)):
+        logging.info(f'Saved model has been found and it will be load.')
+        model = tf.keras.models.load_model(os.path.join('train_model', 'saved_model', parameters.model_name))
+        return model
+    else:
+        logging.info("Compiling model from json and weights. In progress.")
+        with open(os.path.join('train_model', 'saved_model', f'{parameters.model_name[:-3]}.json'), 'r') as json_file:
+            loaded_model_json = json_file.read()
+
+        model = model_from_json(loaded_model_json)
+        # load weights into new model
+        model.load_weights(os.path.join('train_model', 'saved_model', f'{parameters.model_name[:-3]}_weights.h5'))
+        model.compile(loss='sparse_categorical_crossentropy',
+                      optimizer=keras.optimizers.SGD(learning_rate=parameters.all_layers_training_lr,
+                                                     momentum=parameters.all_layers_training_momentum,
+                                                     decay=parameters.all_layers_training_decay),
+                      metrics=['accuracy'])
+        model.save(os.path.join('train_model', 'saved_model', parameters.model_name))
+        logging.info("Compiling model from json and weights. Success!")
+        return model
 
 
 def preprocess_image(image, label):
@@ -101,7 +127,7 @@ class TrainModel:
     @classmethod
     def fit(self, parameters):
         if model_saved(parameters):
-            self.model = tf.keras.models.load_model(os.path.join('train_model', 'saved_model', parameters.model_name))
+            self.model = load_saved_model(parameters)
 
         else:
             self.dataset = prepare_dataset(parameters)
