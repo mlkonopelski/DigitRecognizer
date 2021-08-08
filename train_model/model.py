@@ -9,10 +9,10 @@ import warnings
 
 
 def model_saved():
-    if os.path.isfile(os.path.join('saved_models', model_params.model_name)):
+    if os.path.isfile(os.path.join('train_model', 'saved_model', model_params.model_name)):
         return True
     else:
-        for fname in os.listdir('saved_models'):
+        for fname in os.listdir('saved_model'):
             if fname.endswith('.h5'):
                 warnings.warn("The model found have wrong name. It's not guaranteed to work.")
                 return True
@@ -28,7 +28,7 @@ def preprocess_image(image, label):
 
 
 def prepare_dataset():
-    (train, valid, test), ds_info = tfds.load('mnist',
+    (train, valid), ds_info = tfds.load('mnist',
                                               split=['train[:90%]', 'train[90%:]'],
                                               as_supervised=True,
                                               batch_size=32,
@@ -40,7 +40,7 @@ def prepare_dataset():
 
 
 def train_model(dataset, parameters):
-    train, test, valid = dataset
+    train, valid = dataset
     base_model = applications.Xception(include_top=False,
                                        weights="imagenet",
                                        classifier_activation="softmax")
@@ -64,7 +64,7 @@ def train_model(dataset, parameters):
                   optimizer=keras.optimizers.SGD(learning_rate=0.01, momentum=0.9, decay=0.001),
                   metrics=['accuracy'])
 
-    history = model.fit(train, epochs=10, validation_data=valid)
+    history = model.fit(train, epochs=3, validation_data=valid)
 
     return model
 
@@ -74,25 +74,9 @@ class TrainModel:
     @classmethod
     def fit(self, parameters):
         if model_saved():
-            self.model = tf.keras.models.load_model(os.path.join('saved_model', model_params.model_name))
+            self.model = tf.keras.models.load_model(os.path.join('train_model', 'saved_model', model_params.model_name))
 
         else:
             self.dataset = prepare_dataset()
             self.model = train_model(self.dataset, parameters)
             self.model.save(os.path.join('saved_model', model_params.model_name))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
