@@ -2,6 +2,7 @@ import os
 
 import cv2 as cv
 import numpy as np
+import logging
 import tensorflow as tf
 from tensorflow.keras.applications import xception
 
@@ -50,14 +51,18 @@ class PreprocessImage:
 
 
 def preprocess_images():
+    logging.info(f'Preprocessing of images. In progress.')
     images = []
     included_extensions = ['jpg', 'jpeg', 'bmp', 'png']
     file_names = [fn for fn in os.listdir('test_samples') if any(fn.endswith(ext) for ext in included_extensions)]
     for img_path in file_names:
+        logging.info(f'\tPreprocessing of image: {img_path}. In progress.')
         preprocessed_image = PreprocessImage(os.path.join('test_samples', img_path))
         images.append([img_path, preprocessed_image.rectangles, preprocessed_image.numbers])
+        logging.info(f'\tPreprocessing of image: {img_path}. Success!')
     if len(images) == 0:
         print('There are no pictures to be predicted')
+    logging.info(f'Preprocessing of images. Success!')
     return images
 
 
