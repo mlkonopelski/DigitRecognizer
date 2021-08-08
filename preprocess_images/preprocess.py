@@ -1,11 +1,12 @@
+import os
+
 import cv2 as cv
 import numpy as np
 import tensorflow as tf
 from tensorflow.keras.applications import xception
-import matplotlib.pyplot as plt
+
 from config import preprocess_params
 from visualizations.image_visualizations import visualize_image
-import os
 
 
 class PreprocessImage:
@@ -22,12 +23,13 @@ class PreprocessImage:
             contours, _ = cv.findContours(img, cv.RETR_TREE, cv.CHAIN_APPROX_SIMPLE)
 
             rectangles = []
-            for i in range(len(contours)):
-                hull = cv.convexHull(contours[i])
+            for i, c in enumerate(contours):
+                c = cv.approxPolyDP(c, 3, False)
+                hull = cv.convexHull(c)
                 x, y, w, h = cv.boundingRect(hull)
                 rectangles.append([x, y, w, h])
-
-            rectangles = cv.groupRectangles(rectangles, 1)
+                rectangles.append([x, y, w, h])  # because cv.groupRectangles drops rectangles which are only 1
+            rectangles = cv.groupRectangles(rectangles, 1, eps=preprocess_params.group_rectangles_eps)
             return rectangles
 
         def cut_numbers_from_canvas(img, rectangles):
@@ -60,7 +62,7 @@ def preprocess_images():
 
 if __name__ == '__main__':
 
-    images = PreprocessImage('../test_samples/Example1.png').numbers
+    images = PreprocessImage('../test_samples/Example2.png').numbers
 
     for img in images:
         visualize_image(img)
