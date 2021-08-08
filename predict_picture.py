@@ -6,6 +6,7 @@ from tensorflow.keras.models import load_model
 from config import model_params
 from preprocess_images.preprocess import PreprocessImage
 from utils.utility_functions import timeit
+from train_model.model import load_saved_model
 
 
 @timeit
@@ -25,7 +26,7 @@ def predict_picture(img, model):
 
 if __name__ == '__main__':
 
-    model = load_model(os.path.join('train_model', 'saved_model', model_params.model_name))
+    model = load_saved_model(model_params)
     images = [os.path.join('test_samples', fn) for fn in os.listdir('test_samples') if any(fn.endswith(ext) for ext in ['jpg', 'jpeg', 'bmp', 'png'])]
 
     for img in images:
