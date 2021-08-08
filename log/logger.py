@@ -8,6 +8,9 @@ from datetime import datetime
 
 class Logger:
     def __new__(cls):
+        '''
+        Log in file and print ons screen each logging message in the script.
+        '''
         return logging.basicConfig(level=logging.INFO,
                                     format='%(asctime)s %(levelname)s: %(message)s',
                                    handlers=[

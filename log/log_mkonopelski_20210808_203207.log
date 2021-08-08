@@ -1,0 +1,27 @@
+2021-08-08 20:32:07,521 INFO: Preprocessing of images. In progress.
+2021-08-08 20:32:07,522 INFO: 	Preprocessing of image: Example1.png. In progress.
+2021-08-08 20:32:07,556 INFO: 	Preprocessing of image: Example1.png. Success!
+2021-08-08 20:32:07,556 INFO: 	Preprocessing of image: Example2.png. In progress.
+2021-08-08 20:32:07,568 INFO: 	Preprocessing of image: Example2.png. Success!
+2021-08-08 20:32:07,569 INFO: 	Preprocessing of image: Example3.png. In progress.
+2021-08-08 20:32:07,578 INFO: 	Preprocessing of image: Example3.png. Success!
+2021-08-08 20:32:07,579 INFO: 	Preprocessing of image: Example4.png. In progress.
+2021-08-08 20:32:07,591 INFO: 	Preprocessing of image: Example4.png. Success!
+2021-08-08 20:32:07,592 INFO: 	Preprocessing of image: Example5.png. In progress.
+2021-08-08 20:32:07,610 INFO: 	Preprocessing of image: Example5.png. Success!
+2021-08-08 20:32:07,610 INFO: Preprocessing of images. Success!
+2021-08-08 20:32:07,612 INFO: Saved model has been found and it will be load.
+2021-08-08 20:32:08,707 INFO: Making predictions. In progress.
+2021-08-08 20:32:08,707 INFO: 	Making predictions of image: Example1.png. In progress.
+2021-08-08 20:32:09,640 INFO: 	Making predictions of image: Example1.png. Success!
+2021-08-08 20:32:09,641 INFO: 	Making predictions of image: Example2.png. In progress.
+2021-08-08 20:32:10,110 INFO: 	Making predictions of image: Example2.png. Success!
+2021-08-08 20:32:10,110 INFO: 	Making predictions of image: Example3.png. In progress.
+2021-08-08 20:32:10,593 INFO: 	Making predictions of image: Example3.png. Success!
+2021-08-08 20:32:10,593 INFO: 	Making predictions of image: Example4.png. In progress.
+2021-08-08 20:32:11,122 INFO: 	Making predictions of image: Example4.png. Success!
+2021-08-08 20:32:11,122 INFO: 	Making predictions of image: Example5.png. In progress.
+2021-08-08 20:32:12,020 INFO: 	Making predictions of image: Example5.png. Success!
+2021-08-08 20:32:12,020 INFO: Making predictions. Success!
+2021-08-08 20:32:12,021 INFO: Printing results of prediction. In progress.
+2021-08-08 20:32:12,021 INFO: Printing results of prediction. Success!

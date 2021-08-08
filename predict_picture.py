@@ -10,6 +10,13 @@ from utils.utility_functions import timeit
 
 @timeit
 def predict_picture(img, model):
+    '''
+    Simple function which uses already trained model to predict numbers on pictures
+    :params:
+        img: path to picture to be scored
+        model: tensorflow model isntance already fitted. Best to use as below by loading saved model.
+    :return string - ordered numbers on canvas
+    '''
     pred = model.predict(PreprocessImage(img).numbers)
     pred = np.sort(pred.argmax(axis=-1))
     pred = ''.join(map(str, pred))

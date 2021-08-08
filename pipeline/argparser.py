@@ -2,6 +2,10 @@ import argparse
 
 
 def initialize_parser():
+    '''
+    Catch the arguments which are added to starting the script from command line.
+    :return: class args with each argument as attribute
+    '''
     parser = argparse.ArgumentParser(description='Digit Recognizer')
     parser.add_argument('--csv',
         action='store_true',

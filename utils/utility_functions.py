@@ -2,6 +2,11 @@ import time
 
 
 def timeit(method):
+    '''
+    Decorator to measure the tiem of executing the function. Will be used to check how fast prediction of one image is done
+    :param method: function on which it will be used
+    :return: time in ms
+    '''
     def timed(*args, **kw):
         ts = time.time()
         result = method(*args, **kw)

@@ -15,11 +15,18 @@ from visualizations.image_visualizations import visualize_image_with_bounding_bo
 class Pipeline:
 
     def __init__(self, args):
+        '''
+        Pipeline class will be used to run the whole analysis and predict all pictures from test_samples directory
+        :arg -> argaparser with --bash like arguemets.
+        '''
 
         self.stages = args
         self.images = preprocess_images()
 
     def run(self):
+        '''
+        Run all of the stages of pipeline
+        '''
 
         if self.stages.download_model:
             self.download_model()
@@ -31,14 +38,27 @@ class Pipeline:
 
     @staticmethod
     def download_model():
+        #TODO: This is not working. I need better place to host this model to be able to download it directly
+        logging.warning('This is not working as model is saved in google drive in which I have problem to download directly')
         urlretrieve(model_params.model_url_path, os.path.join('train_model', 'saved_model', model_params.model_name))
 
     def train_model(self):
+        '''
+        If model was not saved this functions starting training process on mnist dataset and Xception model.
+        :return: tensorflow model instance. Easy to use by calling .predict() method on it.
+        '''
         model = TrainModel()
         model.fit(model_params)
         return model
 
     def make_predictions(self):
+        '''
+        Run prediction on each picture in test_samples directory
+        :return: predictions which is a list of 3 objects:
+                * img_path - name of picture. Used as identifier.
+                * retangles - [(x, y, w, h)] - coordinates of bounding boxes around each number
+                * predictions - string - sorted predicted numbers
+        '''
         logging.info(f'Making predictions. In progress.')
         predictions = []
         for img_path, rectangles, numbers_to_predict in self.images:
@@ -52,6 +72,12 @@ class Pipeline:
         return predictions
 
     def store_results(self):
+        '''
+        Store results in on the methods:
+            * print on screen
+            * save as csv file
+            * save each prediction as original picture with bounding boxes and prediction
+        '''
         # default version - print on screen
         if not self.stages.csv and not self.stages.showpicture:
             logging.info(f'Printing results of prediction. In progress.')
